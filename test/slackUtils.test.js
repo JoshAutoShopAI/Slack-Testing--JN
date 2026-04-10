@@ -10,16 +10,8 @@ test('parseOnboardText parses mention + email', () => {
   assert.equal(parsed.value.email, 'doryan@autoshopcallbacks.net');
 });
 
-test('parseOnboardText accepts @display name with spaces + email', () => {
-  const parsed = parseOnboardText('@Doryan Jackson doryan@autoshopcallbacks.net');
-  assert.equal(parsed.ok, true);
-  assert.equal(parsed.value.targetUserId, null);
-  assert.equal(parsed.value.targetDisplay, '@Doryan Jackson');
-  assert.equal(parsed.value.email, 'doryan@autoshopcallbacks.net');
-});
-
 test('parseOnboardText rejects invalid email', () => {
-  const parsed = parseOnboardText('@Doryan Jackson not-an-email');
+  const parsed = parseOnboardText('<@U123ABC> not-an-email');
   assert.equal(parsed.ok, false);
   assert.match(parsed.error, /valid email/i);
 });

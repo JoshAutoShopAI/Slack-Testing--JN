@@ -4,7 +4,7 @@ Backend for `/codex-onboard @user email@example.com` with Slack request verifica
 
 ## What it does
 - Verifies Slack request signatures (`X-Slack-Signature` / `X-Slack-Request-Timestamp`)
-- Accepts `/codex-onboard @user email@example.com` (escaped mention like `<@U123|name>` or display name like `@Doryan Jackson`)
+- Accepts `/codex-onboard @user email@example.com`
 - Immediately acknowledges command to avoid Slack timeouts
 - Sends target user a DM with a **Link Codex to Slack** button
 - Posts async success/failure update to the command invoker via `response_url`

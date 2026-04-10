@@ -66,20 +66,6 @@ async function sendToResponseUrl(responseUrl, message) {
   });
 }
 
-async function resolveUserId(parsedValue) {
-  if (parsedValue.targetUserId) {
-    return parsedValue.targetUserId;
-  }
-
-  const lookup = await slackApi('users.lookupByEmail', { email: parsedValue.email });
-  const userId = lookup.user?.id;
-  if (!userId) {
-    throw new Error(`Could not resolve Slack user by email ${parsedValue.email}`);
-  }
-
-  return userId;
-}
-
 async function sendOnboardingDm(targetUserId, email) {
   const open = await slackApi('conversations.open', { users: targetUserId });
   const channel = open.channel?.id;
@@ -136,13 +122,12 @@ app.post('/slack/commands', async (req, res) => {
     return res.status(200).send(parsed.error);
   }
 
-  const { email, targetDisplay } = parsed.value;
+  const { targetUserId, email } = parsed.value;
   const responseUrl = req.body.response_url;
 
-  res.status(200).send(`Onboarding queued for ${targetDisplay} (${email}).`);
+  res.status(200).send(`Onboarding queued for <@${targetUserId}> (${email}).`);
 
   try {
-    const targetUserId = await resolveUserId(parsed.value);
     await sendOnboardingDm(targetUserId, email);
     await sendToResponseUrl(responseUrl, {
       response_type: 'ephemeral',
@@ -152,7 +137,7 @@ app.post('/slack/commands', async (req, res) => {
     console.error(error);
     await sendToResponseUrl(responseUrl, {
       response_type: 'ephemeral',
-      text: `❌ Failed to start onboarding for ${targetDisplay}: ${error.message}`,
+      text: `❌ Failed to start onboarding for <@${targetUserId}>: ${error.message}`,
     });
   }
 });
