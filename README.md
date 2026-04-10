@@ -4,14 +4,14 @@ Backend for `/codex-onboard @user email@example.com` with Slack request verifica
 
 ## What it does
 - Verifies Slack request signatures (`X-Slack-Signature` / `X-Slack-Request-Timestamp`)
-- Accepts `/codex-onboard @user email@example.com` (escaped mention like `<@U123|name>` or display name like `@Doryan Jackson`)
+- Accepts `/codex-onboard @user email@example.com`
 - Immediately acknowledges command to avoid Slack timeouts
 - Sends target user a DM with a **Link Codex to Slack** button
 - Posts async success/failure update to the command invoker via `response_url`
 
 ## Railway deploy
 1. Create a new Railway project from this repository.
-2. Set environment variables from `.env.example` (optional: set `APP_VERSION` to track deploys).
+2. Set environment variables from `.env.example`.
 3. Deploy.
 4. Copy Railway public URL into Slack app settings:
    - Slash command URL: `https://<railway-url>/slack/commands`
@@ -34,8 +34,3 @@ npm test
 - `im:write`
 - `users:read`
 - `users:read.email`
-
-
-## Verify deployed version
-- `GET /health` returns `{ "ok": true, "version": "..." }`.
-- Set `APP_VERSION` in Railway env vars before deploy so you can confirm new code is live.

@@ -36,37 +36,24 @@ export function parseOnboardText(text) {
     return { ok: false, error: 'Usage: /codex-onboard @user email@example.com' };
   }
 
-  const email = tokens[tokens.length - 1];
-  const targetRaw = tokens.slice(0, -1).join(' ');
+  const [targetToken, email] = tokens;
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!emailOk) {
     return { ok: false, error: 'Please provide a valid email as the second argument.' };
   }
 
-  if (!targetRaw) {
+  const mentionMatch = targetToken.match(/^<@([A-Z0-9]+)(?:\|[^>]+)?>$/);
+  if (!mentionMatch) {
     return {
       ok: false,
-      error: 'Please provide a Slack user mention or name before the email.',
-    };
-  }
-
-  const mentionMatch = targetRaw.match(/^<@([A-Z0-9]+)(?:\|[^>]+)?>$/);
-  if (mentionMatch) {
-    return {
-      ok: true,
-      value: {
-        targetUserId: mentionMatch[1],
-        targetDisplay: targetRaw,
-        email,
-      },
+      error: 'Please mention a Slack user as the first argument, e.g. @doryan',
     };
   }
 
   return {
     ok: true,
     value: {
-      targetUserId: null,
-      targetDisplay: targetRaw,
+      targetUserId: mentionMatch[1],
       email,
     },
   };
